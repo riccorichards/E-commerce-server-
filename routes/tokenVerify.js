@@ -1,5 +1,6 @@
 import Jwt from "jsonwebtoken"
 import UserSchema from "../moduls/User.js"
+
 export const verifyToken = (req, res, next) => {
 	const Authheaders = req.headers.token
 
@@ -14,7 +15,7 @@ export const verifyToken = (req, res, next) => {
 				return res.status(403).json({ message: "The token is not valid!" })
 			}
 			const user = await UserSchema.findById(token.id)
-
+			console.log("verifyToken")
 			req.user = user
 
 			next()
@@ -27,7 +28,9 @@ export const verifyToken = (req, res, next) => {
 
 export const veryfiTokenAndAuthorization = (req, res, next) => {
 	verifyToken(req, res, () => {
+
 		if ((req.user.id === req.params.id) || req.user.isAdmin) {
+			console.log("veryfiTokenAndAuthorization")
 			next()
 		} else {
 			return res.status(403).json({ message: "You have not permission to do that!" })
@@ -39,6 +42,7 @@ export const veryfiTokenAndAuthorization = (req, res, next) => {
 export const veryfiTokenAndAdmin = (req, res, next) => {
 	verifyToken(req, res, () => {
 		if (req.user.isAdmin) {
+			console.log("veryfiTokenAndAdmin")
 			next()
 		} else {
 			return res.status(403).json({ message: "You have not permission to do that!" })

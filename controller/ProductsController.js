@@ -9,7 +9,6 @@ export const getProducts = async (req, res) => {
 			const products = await ProductsSchema.find().sort({ createdAt: -1 }).limit(1)
 			return res.json(products)
 		} else if (qCategory) {
-			console.log(qCategory)
 			const products = await ProductsSchema.find({ category: { $in: [qCategory] } })
 			return res.json(products)
 		} else {
