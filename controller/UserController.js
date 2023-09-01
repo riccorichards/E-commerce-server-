@@ -1,11 +1,13 @@
 import UserSchema from "../moduls/User.js"
+import bcrypt from 'bcrypt';
 
 
 export const getAllUsers = async (req, res) => {
 	const query = req.query.new
 	try {
 		const users = query ? await UserSchema.find().sort({ _id: -1 }).limit(5) : await UserSchema.find()
-		res.status(200).json(users)
+		const withoutAdmin = users.filter(user => user.isAdmin === false)
+		res.status(200).json(withoutAdmin)
 	} catch (err) {
 		console.log(err)
 		return res.status(500).json({ message: "Something wents wrong..." })
@@ -32,9 +34,33 @@ export const OneUser = async (req, res) => {
 }
 
 export const updateUser = async (req, res) => {
+	const { userId, password, username, email } = req.body
+	let newPassword;
+	if (password) {
+		const salt = await bcrypt.genSalt(13)
+		newPassword = await bcrypt.hash(password, salt)
+	}
+
+	const requestForUpdate = {};
+
+	if (username) {
+		requestForUpdate.username = username;
+	}
+
+	if (email) {
+		requestForUpdate.email = email;
+	}
+
+	if (password) {
+		requestForUpdate.password = newPassword;
+	}
+
+	if (req.body.profileUrl) {
+		requestForUpdate.profileUrl = req.body.profileUrl;
+	}
 	try {
-		const updateUser = await UserSchema.findByIdAndUpdate(req.params.id, {
-			$set: req.body
+		const updateUser = await UserSchema.findByIdAndUpdate(userId, {
+			$set: requestForUpdate
 		}, { new: true })
 
 		res.json(updateUser)

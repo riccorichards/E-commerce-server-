@@ -1,4 +1,5 @@
 import OrderSchema from "../moduls/Order.js";
+import User from "../moduls/User.js";
 
 
 export const getAllOrders = async (req, res) => {
@@ -25,11 +26,17 @@ export const getOrder = async (req, res) => {
 
 export const createOrders = async (req, res) => {
 	const orders = req.body;
+	const { userId } = orders
+	console.log({orders, userId})
+	const user = await User.findById(userId)
 	try {
 		const doc = new OrderSchema(orders)
 
 		await doc.save()
 
+		user.orders.push(doc._id)
+
+		await user.save()
 		res.status(201).json(doc)
 	} catch (err) {
 		return res.status(500).json({ message: "Something wents wrong..." })
@@ -62,7 +69,6 @@ export const updateOrders = async (req, res) => {
 
 	try {
 		const updated = await orderUpdate({ userId }, updating)
-		console.log(updated)
 		if (!updated) {
 			return res.status(404).json({ message: "Could not found" })
 		}
@@ -103,9 +109,3 @@ export const getIncome = async (req, res) => {
 		return res.status(500).json({ message: "Something went wrong..." });
 	}
 };
-
-export const test = async (req, res) => {
-	if (req.user.Admin) {
-		await res.status(202)
-	}
-}

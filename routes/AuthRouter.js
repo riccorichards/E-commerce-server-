@@ -5,6 +5,7 @@ import Errorhadler from "../Errorhadler.js";
 
 const AuthRouter = express.Router()
 
+
 AuthRouter.post("/register", registerValidation, Errorhadler, register)
 AuthRouter.post("/login", loginValidation, Errorhadler, login)
 

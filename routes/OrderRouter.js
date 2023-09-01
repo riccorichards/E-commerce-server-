@@ -1,6 +1,6 @@
 import express from "express";
 import { verifyToken, veryfiTokenAndAdmin, veryfiTokenAndAuthorization } from "./tokenVerify.js";
-import { createOrders, deleteOrders, getAllOrders, getIncome, getOrder, test, updateOrders } from "../controller/OrderController.js";
+import { createOrders, deleteOrders, getAllOrders, getIncome, getOrder, updateOrders } from "../controller/OrderController.js";
 
 const OrderRouter = express.Router()
 

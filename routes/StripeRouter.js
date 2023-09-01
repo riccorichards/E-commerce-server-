@@ -1,20 +1,13 @@
 import gettingStripe from "stripe";
 import express from "express";
 
-const stripe = gettingStripe(process.env.STRIPE_KEY)
+const stripe = gettingStripe("sk_test_51Nf3pXDzzupGtRHjVZ9a0wrOaJLBGPZUcyMy3AvPmLdykfej1tTvM5lZFWYxMfyur4N8LkroV619SrrJQRxNWsGM00CdAqjUcv")
 const StripeRouter = express.Router()
 
 
 StripeRouter.post("/payment", async (req, res) => {
 	try {
-
-		const validUser = req.headers.authorization
-		console.log(validUser.split(" ")[1])
-		if (!validUser) {
-			return res.status(400).json({ message: "You are not valid tp make request like this!" })
-		}
-
-		stripe.charges.create(
+		await stripe.charges.create(
 			{
 				source: req.body.tokenId,
 				amount: req.body.amount,
@@ -22,8 +15,7 @@ StripeRouter.post("/payment", async (req, res) => {
 			},
 			(stripeErr, StripeRes) => {
 				if (stripeErr) {
-					console.log(stripeErr)
-					res.status(500).json(stripeErr)
+					return res.status(500).json(stripeErr)
 				} else {
 					res.status(200).json(StripeRes)
 				}

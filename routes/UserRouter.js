@@ -8,7 +8,7 @@ UserRouter.get("/", veryfiTokenAndAdmin, getAllUsers)
 UserRouter.get("/find/:id", veryfiTokenAndAdmin, OneUser)
 UserRouter.get("/stats", veryfiTokenAndAdmin, userStats)
 
-UserRouter.put("/:id", (veryfiTokenAndAdmin || veryfiTokenAndAuthorization), updateUser)
+UserRouter.put("/", (veryfiTokenAndAuthorization || veryfiTokenAndAdmin), updateUser)
 
-UserRouter.delete("/:id", veryfiTokenAndAuthorization, deleteUser)
+UserRouter.delete("/:id", veryfiTokenAndAdmin, deleteUser)
 export default UserRouter

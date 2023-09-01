@@ -3,13 +3,13 @@ import ProductsSchema from "../moduls/Product.js";
 
 export const getProducts = async (req, res) => {
 	const qNew = req.query.new
-	const qCategory = req.query.Category
+	const qCategory = req.query.category
 	try {
 		if (qNew) {
-			const products = await ProductsSchema.find().sort({ createdAt: -1 }).limit(1)
+			const products = await ProductsSchema.find().sort({ createdAt: -1 }).limit(10)
 			return res.json(products)
 		} else if (qCategory) {
-			const products = await ProductsSchema.find({ category: { $in: [qCategory] } })
+			const products = await ProductsSchema.find({ category: { $in: qCategory } });
 			return res.json(products)
 		} else {
 			const products = await ProductsSchema.find()
@@ -35,7 +35,8 @@ export const OneProduct = async (req, res) => {
 }
 
 export const createProducts = async (req, res) => {
-	const produts = req.body;
+	const produts = req.body
+
 	try {
 		const doc = new ProductsSchema(produts)
 
@@ -44,7 +45,7 @@ export const createProducts = async (req, res) => {
 		res.status(201).json(doc)
 	} catch (err) {
 		if (err.keyPattern.title > 0) {
-			return res.status(404).json({ message: "Product the same name is alredy exist" })
+			return res.status(404).json({ message: "Product the same name is already exist" })
 		}
 		return res.status(500).json({ message: "Something wents wrong..." })
 	}
@@ -70,7 +71,7 @@ export const updateProducts = async (req, res) => {
 		}, { new: true })
 		res.status(200).json(updated)
 	} catch (err) {
-		console.log(err)
 		return res.status(500).json({ message: "Something wents wrong..." })
 	}
 }
+

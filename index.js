@@ -8,7 +8,13 @@ import CartRouter from "./routes/CartRouter.js";
 import OrderRouter from "./routes/OrderRouter.js";
 import cors from "cors";
 import StripeRouter from "./routes/StripeRouter.js";
+import multer from "multer";
+import { veryfiTokenAndAdmin } from "./routes/tokenVerify.js";
+import { registerValidation } from "./validation/AuthValidation.js";
+import Errorhadler from "./Errorhadler.js";
+import { register } from "./controller/AuthController.js";
 const app = express()
+
 app.use(cors())
 dotenv.config()
 app.use(express.json())
@@ -17,6 +23,31 @@ mongoose.connect(process.env.MONGO_URL)
 	.then(() => console.log("Connection succeeded"))
 	.catch((err) => console.log(err))
 
+
+const storage = multer.diskStorage({
+	destination: (_, __, cb) => {
+		cb(null, "uploads")
+	},
+	filename: (_, file, cb) => {
+		cb(null, file.originalname)
+	}
+})
+
+const upload = multer({ storage })
+
+app.post("/upload", veryfiTokenAndAdmin, upload.single("image"), async (req, res) => {
+	res.json({
+		url: `/uploads/${req.file.originalname}`
+	})
+})
+
+app.post("/user-upload", upload.single("image"), async (req, res) => {
+	res.json({
+		url: `/uploads/${req.file.originalname}`
+	})
+})
+
+app.use('/uploads', express.static('uploads'));
 app.use("/auth", AuthRouter)
 app.use("/user", UserRouter)
 app.use("/products", ProductRouter)
