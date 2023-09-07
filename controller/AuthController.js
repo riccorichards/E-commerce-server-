@@ -50,7 +50,7 @@ export const login = async (req, res) => {
 
     const { password, ...otherUserData } = user._doc;
 
-    res.json({ ...otherUserData, accessToken });
+    res.json({ currentUser: otherUserData, token: accessToken });
   } catch (e) {
     console.log(e);
     res.status(500).json({ message: "Something wents wrong..." });
